@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Doctor - Symptom to Cure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(to right, #cceeff, #f0f9ff);
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 123, 255, 0.2);
+        }
+
+        h1 {
+            text-align: center;
+            color: #005b96;
+            margin-bottom: 30px;
+            font-size: 28px;
+        }
+
+        label {
+            font-size: 17px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 14px;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #a2d5f2;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: 0.3s ease-in-out;
+        }
+
+        input[type="text"]:focus {
+            border-color: #007acc;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            background: #007acc;
+            color: white;
+            padding: 12px 26px;
+            border: none;
+            border-radius: 10px;
+            font-size: 17px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        input[type="submit"]:hover {
+            background: #005b96;
+        }
+
+        .result {
+            margin-top: 30px;
+            background: #e6f9f0;
+            padding: 25px;
+            border-left: 6px solid #28a745;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.1);
+        }
+
+        .result h3 {
+            margin-top: 0;
+            color: #28a745;
+        }
+
+        .result p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #333;
+        }
+
+        #downloadBtn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            font-size: 15px;
+            border: none;
+            border-radius: 8px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+
+        #downloadBtn:hover {
+            background-color: #1e7e34;
+        }
+
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            font-size: 14px;
+            color: #777;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            input[type="submit"] {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>🩺 AI Doctor – Get Medical Advice from Your Symptoms</h1>
+
+        <form method="POST" action="/predict">
+            <label for="symptoms">Describe your symptoms:</label>
+            <input type="text" name="symptoms" id="symptoms" required placeholder="e.g. sneezing, headache, nasal congestion">
+            <input type="submit" value="Predict">
+        </form>
+
+        {% if disease %}
+        <div class="result" id="result-box">
+            <h3>Predicted Diagnosis</h3>
+            <p><strong>Symptoms:</strong> {{ symptoms }}</p>
+            <p><strong>Disease:</strong> {{ disease }}</p>
+            <p><strong>English Medicine:</strong> {{ english_medicine }}</p>
+            <p><strong>Ayurvedic Medicine:</strong> {{ ayurvedic_medicine }}</p>
+            <p><strong>Diet Recommendation:</strong> {{ diet }}</p>
+        </div>
+        <button id="downloadBtn" onclick="downloadPDF()">Download PDF Report</button>
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        © 2025 AI Doctor | For informational use only. Always consult a physician.
+    </div>
+
+    <script>
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const resultBox = document.getElementById("result-box");
+
+            let title = "🩺 AI Doctor - Medical Report";
+            let content = resultBox.innerText;
+
+            doc.setFontSize(18);
+            doc.text(title, 14, 20);
+            doc.setFontSize(12);
+            let lines = doc.splitTextToSize(content, 180);
+            doc.text(lines, 14, 35);
+            doc.save("AI_Doctor_Report.pdf");
+        }
+    </script>
+
+</body>
+</html>
